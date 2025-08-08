@@ -1,5 +1,8 @@
 name: 'Compare Versions'
 description: 'Compare current and previous versions of the code.'
+branding:
+  icon: 'tag'
+  color: 'blue'
 
 inputs:
   repo-clone-url:
