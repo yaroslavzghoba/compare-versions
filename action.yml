@@ -1,4 +1,4 @@
-name: 'Compare versions'
+name: 'Compare Versions'
 description: 'Compare current and previous versions of the code.'
 
 inputs:
