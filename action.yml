@@ -23,22 +23,38 @@ runs:
       shell: bash
       run: |
         pwd 
+        echo "----- ls -a -----"
         ls -a
+        echo "-----------------"
+        echo "Action path: ${{ github.action_path }}"
+        echo "Path: ${{ github.path }}"
     - name: Save extraction commands to a file
       shell: bash
       run: |
-        pwd
+        pwd 
+        echo "----- ls -a -----"
         ls -a
+        echo "-----------------"
+        echo "Action path: ${{ github.action_path }}"
+        echo "Path: ${{ github.path }}"
         cat << EOF > ./versions-extractor-7602f6c0.sh
         #!/bin/bash
-        "${{ inputs.versions-extractor }}"
+        ${{ inputs.versions-extractor }}
         EOF
+        echo "Saved extraction commands to ./versions-extractor-7602f6c0.sh"
         cat ./versions-extractor-7602f6c0.sh
+        echo "----- ls -a -----"
+        ls -a
+        echo "-----------------"
     - name: Extract and compare current and previous versions
       shell: bash
       run: |
-        pwd
+        pwd 
+        echo "----- ls -a -----"
         ls -a
+        echo "-----------------"
+        echo "Action path: ${{ github.action_path }}"
+        echo "Path: ${{ github.path }}"
         ./scripts/compare-versions.sh \
           "${{ inputs.repo-clone-url }}" \
           "${{ github.event_name }}" \
