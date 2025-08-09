@@ -28,6 +28,22 @@ runs:
         echo "-----------------"
         echo "Action path: ${{ github.action_path }}"
         echo "Path: ${{ github.path }}"
+        echo "===>"
+    - name: Set the GitHub Path
+      shell: Bash
+      run: | 
+        echo "${{ github.action_path }}" >> $GITHUB_PATH
+        echo "===>" 
+    - name: Check the environment after setting the path
+      shell: bash
+      run: |
+        pwd 
+        echo "----- ls -a -----"
+        ls -a
+        echo "-----------------"
+        echo "Action path: ${{ github.action_path }}"
+        echo "Path: ${{ github.path }}"
+        echo "===>"
     - name: Save extraction commands to a file
       shell: bash
       run: |
@@ -46,6 +62,7 @@ runs:
         echo "----- ls -a -----"
         ls -a
         echo "-----------------"
+        echo "===>"
     - name: Extract and compare current and previous versions
       shell: bash
       run: |
