@@ -21,17 +21,24 @@ runs:
   steps:
     - name: Check the environment
       shell: bash
-      run: ls -a
+      run: |
+        pwd 
+        ls -a
     - name: Save extraction commands to a file
       shell: bash
       run: |
+        pwd
+        ls -a
         cat << EOF > ./versions-extractor-7602f6c0.sh
         #!/bin/bash
         "${{ inputs.versions-extractor }}"
         EOF
+        cat ./versions-extractor-7602f6c0.sh
     - name: Extract and compare current and previous versions
       shell: bash
       run: |
+        pwd
+        ls -a
         ./scripts/compare-versions.sh \
           "${{ inputs.repo-clone-url }}" \
           "${{ github.event_name }}" \

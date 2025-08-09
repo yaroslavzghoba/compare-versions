@@ -5,7 +5,7 @@
 ## Usage
 
 ```yaml
-- uses: yaroslavzghoba/compare-versions@0.1.3
+- uses: yaroslavzghoba/compare-versions@0.1.4
   with:
     # The URL of the repository to clone.
     #
