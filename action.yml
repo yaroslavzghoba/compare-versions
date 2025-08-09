@@ -33,6 +33,12 @@ runs:
       shell: bash
       run: | 
         echo "${{ github.action_path }}" >> $GITHUB_PATH
+        pwd 
+        echo "----- ls -a -----"
+        ls -a
+        echo "-----------------"
+        echo "Action path: ${{ github.action_path }}"
+        echo "Path: ${{ github.path }}"
         echo "===>" 
     - name: Check the environment after setting the path
       shell: bash
