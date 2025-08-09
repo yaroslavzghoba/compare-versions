@@ -23,7 +23,7 @@ runs:
       run: ls -a
     - name: Save extraction commands to a file
       run: |
-        cat << EOF > ./versions-extractor.sh
+        cat << EOF > ./versions-extractor-7602f6c0.sh
         #!/bin/bash
         "${{ inputs.versions-extractor }}"
         EOF
@@ -35,4 +35,4 @@ runs:
           "${{ github.head_ref }}" \
           "${{ github.base_ref }}" \
           "${{ github.ref_name }}" \
-          ./versions-extractor.sh
+          ./versions-extractor-7602f6c0.sh
