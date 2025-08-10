@@ -19,6 +19,10 @@ inputs:
 runs:
   using: 'composite'
   steps:
+    - name: Dump GitHub context
+      env:
+        GITHUB_CONTEXT: ${{ toJson(github) }}
+      run: echo "$GITHUB_CONTEXT"
     - name: Check the environment
       shell: bash
       run: |
@@ -29,10 +33,10 @@ runs:
         echo "Action path: ${{ github.action_path }}"
         echo "Path: ${{ github.path }}"
         echo "===>"
-    - name: Set the GitHub Path
+    - name: Change directory to the action path
       shell: bash
       run: | 
-        echo "${{ github.action_path }}" >> $GITHUB_PATH
+        cd "${{ github.action_path }}"
         pwd 
         echo "----- ls -a -----"
         ls -a
