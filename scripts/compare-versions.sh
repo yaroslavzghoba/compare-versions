@@ -13,11 +13,18 @@ PREVIOUS_VERSION_FILE=".previous-version-7602f6c0.txt"
 
 # --- Functions ---
 
-# is_pr checks if the provided event name corresponds to a pull request.
+# Check if the provided event name corresponds to a pull request.
 # Returns:
 #   0 if the event is a pull request.
-#   1 otherwise.
+#   1 if the event is not a pull request.
+#   2 if the function is called without an argument.
 is_pr() {
+  # Check if exactly one argument was provided to the function.
+  if [ "$#" -ne 1 ]; then
+      echo "Error: The function '$0' requires exactly one argument." >&2
+      return 2
+  fi
+
   local event_name="$1"
   case "$event_name" in
     "pull_request" | "pull_request_target")
@@ -27,6 +34,35 @@ is_pr() {
       return 1
       ;;
   esac
+}
+
+# Compare two version strings.
+# Returns:
+#   0 if the current version is greater than the previous version.
+#   1 if the versions are equal or the current version is not greater than the previous version.
+#   2 if the function is called with an incorrect number of arguments.
+compare_versions() {
+    # Check if exactly two arguments were provided to the function.
+    if [ "$#" -ne 2 ]; then
+        echo "Error: The function '$0' requires exactly two arguments." >&2
+        return 2  # Return a unique status for argument error.
+    fi
+
+    local current_version="$1"
+    local previous_version="$2"
+
+    # Use sort -V for robust version comparison.
+    # The 'head -n 1' command gets the first line (the lower version).
+    if [ "$current_version" = "$previous_version" ]; then
+        echo "Error: The current version ($current_version) is equal to the previous version ($previous_version)." >&2
+        return 1  # Failure
+    elif [ "$current_version" = "$(echo -e "$current_version\n$previous_version" | sort -V | head -n 1)" ]; then
+        echo "Error: The current version ($current_version) is not greater than the previous version ($previous_version)." >&2
+        return 1  # Failure
+    else
+        echo "Success: The current version ($current_version) is greater than the previous version ($previous_version)."
+        return 0  # Success
+    fi
 }
 
 # --- Main Logic ---
@@ -58,6 +94,7 @@ cp "$version_extractor" "$PREVIOUS_VERSION_REPO_DIR"
 # Get the version for the current branch/ref.
 (
   cd "$CURRENT_VERSION_REPO_DIR" || exit 1
+  echo "Current working directory: $(pwd)"
 
   if is_pr "$event_name"; then
     echo "Event is a pull request. Checking out head reference: $head_ref"
@@ -72,10 +109,13 @@ cp "$version_extractor" "$PREVIOUS_VERSION_REPO_DIR"
   echo "Current version: $(cat "../$CURRENT_VERSION_FILE")"
 )
 
+echo "Current working directory: $(pwd)"
+
 # Get the version for the previous branch/ref.
 echo "Setting up previous version repository..."
 (
   cd "$PREVIOUS_VERSION_REPO_DIR" || exit 1
+  echo "Current working directory: $(pwd)"
 
   if is_pr "$event_name"; then
     git checkout "$base_ref" || exit 1
@@ -93,6 +133,7 @@ echo "Setting up previous version repository..."
   # Execute the version extractor and save the output.
   "./$(basename "$version_extractor")" > "../$PREVIOUS_VERSION_FILE" || exit 1
   echo "Previous version: $(cat "../$PREVIOUS_VERSION_FILE")"
-)
 
-echo "Script finished successfully."
+  cd ../scripts || exit 1
+  compare_versions "$(cat "../$CURRENT_VERSION_FILE")" "$(cat "../$PREVIOUS_VERSION_FILE")" || exit 1
+)
