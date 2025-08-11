@@ -58,6 +58,7 @@ runs:
     - name: Save extraction commands to a file
       shell: bash
       run: |
+        cd "${{ github.action_path }}"
         pwd 
         echo "----- ls -a -----"
         ls -a
@@ -77,6 +78,7 @@ runs:
     - name: Extract and compare current and previous versions
       shell: bash
       run: |
+        cd "${{ github.action_path }}"
         pwd 
         echo "----- ls -a -----"
         ls -a
