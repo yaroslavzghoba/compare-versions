@@ -4,12 +4,12 @@
 
 # --- Configuration Variables ---
 # Unique directory names to avoid conflicts.
-CURRENT_VERSION_REPO_DIR=".current-version-repo-7602f6c0"
-PREVIOUS_VERSION_REPO_DIR=".previous-version-repo-7602f6c0"
+CURRENT_VERSION_REPO_DIR=".current-version-repo"
+PREVIOUS_VERSION_REPO_DIR=".previous-version-repo"
 
 # Unique temporary file names for version strings.
-CURRENT_VERSION_FILE=".current-version-7602f6c0.txt"
-PREVIOUS_VERSION_FILE=".previous-version-7602f6c0.txt"
+CURRENT_VERSION_FILE=".current-version.txt"
+PREVIOUS_VERSION_FILE=".previous-version.txt"
 
 # --- Functions ---
 
@@ -82,9 +82,10 @@ ref_name="$5"
 version_extractor="$6"
 
 # Create a temporary directory for the current version.
-echo "Setting up current version repository..."
+echo "Cloning the Git repository..."
 chmod u+x "$version_extractor"
 git clone --quiet "$repo_clone_url" "$CURRENT_VERSION_REPO_DIR" || exit 1
+echo "Copying version extractor..."
 cp "$version_extractor" "$CURRENT_VERSION_REPO_DIR"
 
 # Create a temporary directory for the previous version.
@@ -93,46 +94,45 @@ cp "$version_extractor" "$PREVIOUS_VERSION_REPO_DIR"
 
 # Get the version for the current branch/ref.
 (
+  echo "Setting up current version repository..."
   cd "$CURRENT_VERSION_REPO_DIR" || exit 1
   echo "Current working directory: $(pwd)"
 
   if is_pr "$event_name"; then
-    echo "Event is a pull request. Checking out head reference: $head_ref"
+    echo "  Event is a pull request. Switching to the source branch: $head_ref."
     git checkout "$head_ref" || exit 1
   else
-    echo "Event is not a pull request. Checking out reference: $ref_name"
+    echo "  Event is not a pull request. Switching to the source branch: $ref_name."
     git checkout "$ref_name" || exit 1
   fi
 
   # Execute the version extractor and save the output.
   "./$(basename "$version_extractor")" > "../$CURRENT_VERSION_FILE" || exit 1
-  echo "Current version: $(cat "../$CURRENT_VERSION_FILE")"
+  echo "  Current version extracted: $(cat "../$CURRENT_VERSION_FILE").\n"
 )
 
-echo "Current working directory: $(pwd)"
-
-# Get the version for the previous branch/ref.
-echo "Setting up previous version repository..."
+# Extract the previous version
 (
+  echo "Setting up previous version repository..."
   cd "$PREVIOUS_VERSION_REPO_DIR" || exit 1
   echo "Current working directory: $(pwd)"
 
   if is_pr "$event_name"; then
+    echo "  Event is a pull request. Switching to the target branch: $base_ref."
     git checkout "$base_ref" || exit 1
-    echo "Event is a pull request. Checking out base reference: $base_ref"
   else
+    echo "  Event is not a pull request. Switching to the source branch: $ref_name."
     git checkout "$ref_name" || exit 1
-    echo "Event is not a pull request. Checking out reference: $ref_name"
     # Reset to the previous commit to simulate a previous state, as per the original logic.
-    echo "Current commit: $(git log -1 --oneline)"
-    echo "Resetting to the previous commit..."
-    git reset --hard HEAD~1 || exit 1
-    echo "Current commit: $(git log -1 --oneline)"
+    echo "  Current commit: $(git log -1 --oneline)"
+    echo "  Resetting to the previous commit..."
+    git reset -q --hard HEAD~1 || exit 1
+    echo "  Current commit: $(git log -1 --oneline)"
   fi
 
   # Execute the version extractor and save the output.
   "./$(basename "$version_extractor")" > "../$PREVIOUS_VERSION_FILE" || exit 1
-  echo "Previous version: $(cat "../$PREVIOUS_VERSION_FILE")"
+  echo "  Previous version extracted: $(cat "../$PREVIOUS_VERSION_FILE").\n"
 
   cd ../scripts || exit 1
   compare_versions "$(cat "../$CURRENT_VERSION_FILE")" "$(cat "../$PREVIOUS_VERSION_FILE")" || exit 1
