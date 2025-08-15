@@ -8,87 +8,56 @@ inputs:
   repo-clone-url:
     description: > 
       The URL of the repository to clone. 
-      
-      If the repository is private, the URL must include a private access token.
-      For example: `https://<token>@github.com/user/repo.git`
+      Note: If the repository is private, the URL must include a private access token.
+      For example: `https://token@github.com/user/repo.git`
     required: true
   versions-extractor:
-    description: 'Bash commands that should extract the version from the code.'
+    description: >
+      Shell commands that should extract the version from the code. 
+      The shell type is determined by the `shell` input.'
     required: true
+  shell:
+    description: 'The shell to use for running the commands.'
+    default: 'bash'
+    required: false
 
 runs:
   using: 'composite'
   steps:
-    - name: Dump GitHub context
-      shell: bash
-      env:
-        GITHUB_CONTEXT: ${{ toJson(github) }}
-      run: echo "$GITHUB_CONTEXT"
-    - name: Check the environment
-      shell: bash
-      run: |
-        pwd 
-        echo "----- ls -a -----"
-        ls -a
-        echo "-----------------"
-        echo "Action path: ${{ github.action_path }}"
-        echo "Path: ${{ github.path }}"
-        echo "===>"
-    - name: Change directory to the action path
-      shell: bash
-      run: | 
-        cd "${{ github.action_path }}"
-        pwd 
-        echo "----- ls -a -----"
-        ls -a
-        echo "-----------------"
-        echo "Action path: ${{ github.action_path }}"
-        echo "Path: ${{ github.path }}"
-        echo "===>" 
-    - name: Check the environment after setting the path
-      shell: bash
-      run: |
-        pwd 
-        echo "----- ls -a -----"
-        ls -a
-        echo "-----------------"
-        echo "Action path: ${{ github.action_path }}"
-        echo "Path: ${{ github.path }}"
-        echo "===>"
     - name: Save extraction commands to a file
       shell: bash
       run: |
         cd "${{ github.action_path }}"
-        pwd 
-        echo "----- ls -a -----"
-        ls -a
-        echo "-----------------"
-        echo "Action path: ${{ github.action_path }}"
-        echo "Path: ${{ github.path }}"
-        cat << EOF > ./versions-extractor-7602f6c0.sh
-        #!/bin/bash
+        echo "====================================================="
+        echo "Current working directory: $(pwd)"
+        echo "Printing content of the action directory...\n"
+        ls -la
+        echo "====================================================="
+
+        echo "Saving extraction commands to ./versions-extractor.sh"
+        cat << EOF > ./versions-extractor.sh
+        #!/bin/${{ inputs.shell }}
+
         ${{ inputs.versions-extractor }}
         EOF
-        echo "Saved extraction commands to ./versions-extractor-7602f6c0.sh"
-        cat ./versions-extractor-7602f6c0.sh
-        echo "----- ls -a -----"
-        ls -a
-        echo "-----------------"
-        echo "===>"
+        echo "Extraction commands saved to ./versions-extractor.sh:"
+        echo "====================================================="
+        echo "-> ./versions-extractor.sh"
+        nl -s ' | ' -b a ./versions-extractor.sh
+        echo "====================================================="
     - name: Extract and compare current and previous versions
       shell: bash
       run: |
         cd "${{ github.action_path }}"
-        pwd 
-        echo "----- ls -a -----"
-        ls -a
-        echo "-----------------"
-        echo "Action path: ${{ github.action_path }}"
-        echo "Path: ${{ github.path }}"
+        echo "====================================================="
+        echo "Current working directory: $(pwd)"
+        echo "Printing content of the action directory...\n"
+        ls -la
+        echo "====================================================="
         ./scripts/compare-versions.sh \
           "${{ inputs.repo-clone-url }}" \
           "${{ github.event_name }}" \
           "${{ github.head_ref }}" \
           "${{ github.base_ref }}" \
           "${{ github.ref_name }}" \
-          ./versions-extractor-7602f6c0.sh
+          ./versions-extractor.sh
