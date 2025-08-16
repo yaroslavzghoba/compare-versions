@@ -17,7 +17,7 @@ inputs:
       The shell type is determined by the `shell` input.'
     required: true
   shell:
-    description: 'The shell to use for running the commands.'
+    description: 'The shell to use for running the commands. By default, it is set to `bash`.'
     default: 'bash'
     required: false
 
@@ -27,6 +27,8 @@ runs:
     - name: Save extraction commands to a file
       shell: bash
       run: |
+        shopt -s xpg_echo
+
         cd "${{ github.action_path }}"
         echo "====================================================="
         echo "Current working directory: $(pwd)"
@@ -40,8 +42,6 @@ runs:
 
         ${{ inputs.versions-extractor }}
         EOF
-        echo "Extraction commands saved to ./versions-extractor.sh:"
-        echo "====================================================="
         echo "-> ./versions-extractor.sh"
         nl -s ' | ' -b a ./versions-extractor.sh
         echo "====================================================="
@@ -49,12 +49,8 @@ runs:
       shell: bash
       run: |
         cd "${{ github.action_path }}"
-        echo "====================================================="
-        echo "Current working directory: $(pwd)"
-        echo "Printing content of the action directory...\n"
-        ls -la
-        echo "====================================================="
-        ./scripts/compare-versions.sh \
+        chmod +x ./src/main.sh
+        ./src/main.sh \
           "${{ inputs.repo-clone-url }}" \
           "${{ github.event_name }}" \
           "${{ github.head_ref }}" \

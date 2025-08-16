@@ -1,4 +1,5 @@
 #!/bin/bash
+shopt -s xpg_echo
 
 # A script to compare versions between different Git references (e.g., a pull request and its base branch).
 
@@ -100,10 +101,10 @@ cp "$version_extractor" "$PREVIOUS_VERSION_REPO_DIR"
 
   if is_pr "$event_name"; then
     echo "  Event is a pull request. Switching to the source branch: $head_ref."
-    git checkout "$head_ref" || exit 1
+    git checkout --quiet "$head_ref" || exit 1
   else
     echo "  Event is not a pull request. Switching to the source branch: $ref_name."
-    git checkout "$ref_name" || exit 1
+    git checkout --quiet "$ref_name" || exit 1
   fi
 
   # Execute the version extractor and save the output.
@@ -119,10 +120,10 @@ cp "$version_extractor" "$PREVIOUS_VERSION_REPO_DIR"
 
   if is_pr "$event_name"; then
     echo "  Event is a pull request. Switching to the target branch: $base_ref."
-    git checkout "$base_ref" || exit 1
+    git checkout --quiet "$base_ref" || exit 1
   else
     echo "  Event is not a pull request. Switching to the source branch: $ref_name."
-    git checkout "$ref_name" || exit 1
+    git checkout --quiet "$ref_name" || exit 1
     # Reset to the previous commit to simulate a previous state, as per the original logic.
     echo "  Current commit: $(git log -1 --oneline)"
     echo "  Resetting to the previous commit..."
