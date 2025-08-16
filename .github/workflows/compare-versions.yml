@@ -15,5 +15,5 @@ jobs:
           repo-clone-url: https://${{ secrets.PAT_FOR_CLONING }}@github.com/yaroslavzghoba/compare-versions.git
           versions-extractor: |
             file="README.md"
-            echo "$(awk -F'@' '${{ github.repository }} {print $2}' "$file")"
+            echo "$(awk -F'@' '/- uses: yaroslavzghoba\/compare-versions/ {print $2}' "$file")"
           shell: "bash"
