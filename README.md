@@ -5,7 +5,7 @@
 ## Usage
 
 ```yaml
-- uses: yaroslavzghoba/compare-versions@0.2.3
+- uses: yaroslavzghoba/compare-versions@0.2.4
   with:
     # The URL of the repository to clone.
     # If the repository is private, the URL must include a private access token.
