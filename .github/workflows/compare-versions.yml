@@ -1,0 +1,19 @@
+name: Compare current and previous versions
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  check-version:
+    runs-on: ubuntu-latest
+    steps:
+        uses: yaroslavzghoba/compare-versions@main
+        with:
+          repo-clone-url: https://${{ secrets.PAT_FOR_CLONING }}@github.com/yaroslavzghoba/compare-versions.git
+          versions-extractor: |
+            file="README.md"
+            echo "$(awk -F'@' '${{ github.repository }} {print $2}' "$file")"
+          shell: "bash"
