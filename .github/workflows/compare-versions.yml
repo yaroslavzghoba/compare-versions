@@ -10,7 +10,7 @@ jobs:
   check-version:
     runs-on: ubuntu-latest
     steps:
-        uses: yaroslavzghoba/compare-versions@main
+      - uses: yaroslavzghoba/compare-versions@main
         with:
           repo-clone-url: https://${{ secrets.PAT_FOR_CLONING }}@github.com/yaroslavzghoba/compare-versions.git
           versions-extractor: |
