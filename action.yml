@@ -37,7 +37,7 @@ runs:
         echo "====================================================="
 
         echo "Saving extraction commands to ./versions-extractor.sh"
-        cat << EOF > ./versions-extractor.sh
+        cat << 'EOF' > ./versions-extractor.sh
         #!/bin/${{ inputs.shell }}
 
         ${{ inputs.versions-extractor }}
