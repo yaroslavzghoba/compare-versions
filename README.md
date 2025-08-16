@@ -5,17 +5,18 @@
 ## Usage
 
 ```yaml
-- uses: yaroslavzghoba/compare-versions@0.2.1
+- uses: yaroslavzghoba/compare-versions@0.2.2
   with:
     # The URL of the repository to clone.
-    #
     # If the repository is private, the URL must include a private access token.
-    # For example: `https://<token>@github.com/user/repo.git`
+    # For example: `https://token@github.com/user/repo.git`
     repo-clone-url: ''
 
     # Bash commands that should extract the version from the code.
     # For example: |
-    #   chmod u+x ./gradlew
-    #   ./gradlew printVersion
+    #   cat ./version.txt
     versions-extractor: ''
+
+    # The shell to use for running the commands. By default, it is set to `bash`.
+    shell: ''
 ```
