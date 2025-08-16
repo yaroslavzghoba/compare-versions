@@ -135,6 +135,6 @@ cp "$version_extractor" "$PREVIOUS_VERSION_REPO_DIR"
   "./$(basename "$version_extractor")" > "../$PREVIOUS_VERSION_FILE" || exit 1
   echo "  Previous version extracted: $(cat "../$PREVIOUS_VERSION_FILE").\n"
 
-  cd ../scripts || exit 1
-  compare_versions "$(cat "../$CURRENT_VERSION_FILE")" "$(cat "../$PREVIOUS_VERSION_FILE")" || exit 1
+  cd .. || exit 1
+  compare_versions "$(cat "./$CURRENT_VERSION_FILE")" "$(cat "./$PREVIOUS_VERSION_FILE")" || exit 1
 )
