@@ -2,7 +2,7 @@
 
 **Compare Version** is a GitHub Actions script that operates on branches and сømmits to extract and compare the current and previous versions of a repository's code.
 
-![docs/compare-versions.mp4](docs/compare-versions.mp4)
+[▶️ Watch how it works on YouTube: https://youtu.be/KY7TzFc9Zgg?si=nNo4WTrYi5MtA8LF](https://github.com/user-attachments/assets/a757eebf-6a52-4c99-b5a5-cd083394a396)
 
 ## Usage
 
