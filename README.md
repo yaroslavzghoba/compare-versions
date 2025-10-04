@@ -2,10 +2,12 @@
 
 **Compare Version** is a GitHub Actions script that operates on branches and сømmits to extract and compare the current and previous versions of a repository's code.
 
+![docs/compare-versions.mp4](docs/compare-versions.mp4)
+
 ## Usage
 
 ```yaml
-- uses: yaroslavzghoba/compare-versions@1.0.0
+- uses: yaroslavzghoba/compare-versions@1.0.1
   with:
     # The URL of the repository to clone.
     # If the repository is private, the URL must include a private access token.
